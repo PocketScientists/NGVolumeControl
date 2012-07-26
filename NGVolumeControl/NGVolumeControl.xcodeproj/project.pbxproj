@@ -73,10 +73,10 @@
 			children = (
 				9BCC746714FCCE8D004F30FF /* NGVolumeControl.h */,
 				9BCC746814FCCE8D004F30FF /* NGVolumeControl.m */,
+				9B17FBF214FCDDDB00BF5F4A /* NGVolumeControlExpandDirection.h */,
 				9B0454F715058022007F8E7C /* NGVolumeControl+NGCustomize.h */,
 				9B0454C81504F33E007F8E7C /* NGGeometryFunctions.h */,
 				9BCC746514FCCE8D004F30FF /* Supporting Files */,
-				9B17FBF214FCDDDB00BF5F4A /* NGVolumeControlExpandDirection.h */,
 			);
 			path = NGVolumeControl;
 			sourceTree = "<group>";
@@ -136,7 +136,7 @@
 		9BCC745614FCCE8C004F30FF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "NOUS Wissensmanagement GmbH";
 			};
 			buildConfigurationList = 9BCC745914FCCE8C004F30FF /* Build configuration list for PBXProject "NGVolumeControl" */;
