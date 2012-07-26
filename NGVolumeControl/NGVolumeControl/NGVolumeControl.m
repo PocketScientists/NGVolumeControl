@@ -72,7 +72,7 @@
         self.backgroundColor = [UIColor clearColor];
 
         _sliderHeight = kNGSliderHeight;
-        _expandDirection = NGVolumeControlExpandDirectionDown;
+        _expandDirection = NGVolumeControlExpandDirectionUp;
         _expanded = NO;
         _minimumTrackColor = [UIColor whiteColor];
         _maximumTrackColor = [UIColor colorWithWhite:1.f alpha:.2f];
