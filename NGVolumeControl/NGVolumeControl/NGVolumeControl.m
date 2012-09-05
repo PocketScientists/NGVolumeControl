@@ -12,6 +12,9 @@
 #define kNGMinimumTapSize                           44.f
 
 
+static MPVolumeView *ng_volumeView = nil;
+
+
 @interface NGVolumeControl ()
 
 @property (nonatomic, strong) UIImageView *volumeImageView;
@@ -62,9 +65,6 @@
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
 ////////////////////////////////////////////////////////////////////////
-
-
-#import <QuartzCore/QuartzCore.h>
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -143,17 +143,25 @@
 #pragma mark - Class Methods
 ////////////////////////////////////////////////////////////////////////
 
-+ (void)preventSystemVolumePopup {
-    // Prevent Audio-Change Popus
-    MPVolumeView *volumeView = [[MPVolumeView alloc] initWithFrame:CGRectMake(-2000., -2000., 0.f, 0.f)];
-    NSArray *windows = [UIApplication sharedApplication].windows;
-
-    volumeView.alpha = 0.1f;
-    volumeView.userInteractionEnabled = NO;
-
-    if (windows.count > 0) {
-        [[windows objectAtIndex:0] addSubview:volumeView];
++ (void)beginPreventingSystemVolumePopup {
+    if (ng_volumeView == nil) {
+        // Prevent Audio-Change Popus
+        ng_volumeView = [[MPVolumeView alloc] initWithFrame:CGRectMake(-2000., -2000., 0.f, 0.f)];
+        ng_volumeView.alpha = 0.1f;
+        ng_volumeView.userInteractionEnabled = NO;
     }
+
+    if (ng_volumeView.superview == nil) {
+        NSArray *windows = [UIApplication sharedApplication].windows;
+
+        if (windows.count > 0) {
+            [[windows objectAtIndex:0] addSubview:ng_volumeView];
+        }
+    }
+}
+
++ (void)endPreventingSystemVolumePopup {
+    [ng_volumeView removeFromSuperview];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -307,8 +315,10 @@
         _expanded = expanded;
 
         if (expanded) {
+            [[self class] beginPreventingSystemVolumePopup];
             [self showSliderAnimated:animated];
         } else {
+            [[self class] endPreventingSystemVolumePopup];
             [self hideSliderAnimated:animated];
         }
     }

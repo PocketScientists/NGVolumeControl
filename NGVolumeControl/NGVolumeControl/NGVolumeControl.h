@@ -33,7 +33,8 @@
  Prevents the system audio change popup from showing up by adding a (hidden) MPVolumeView
  to the first window.
  */
-+ (void)preventSystemVolumePopup;
++ (void)beginPreventingSystemVolumePopup;
++ (void)endPreventingSystemVolumePopup;
 
 - (void)setExpanded:(BOOL)expanded animated:(BOOL)animated;
 
