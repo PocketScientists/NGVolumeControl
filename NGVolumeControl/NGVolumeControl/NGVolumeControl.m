@@ -106,6 +106,7 @@ static MPVolumeView *ng_volumeView = nil;
 }
 
 - (void)dealloc {
+    _volumeDelegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NGSystemVolumeDidChangeNotification object:nil];
 }
 
