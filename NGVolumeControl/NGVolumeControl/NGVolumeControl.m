@@ -28,39 +28,10 @@ static MPVolumeView *ng_volumeView = nil;
 
 @property (nonatomic, strong) UIImageView *sliderBackgroundView;
 
-- (CGAffineTransform)transformForExpandDirection:(NGVolumeControlExpandDirection)expandDirection;
-- (CGRect)volumeViewFrameForExpandDirection:(NGVolumeControlExpandDirection)expandDirection;
-- (UIImage *)imageForSliderBackgroundForExpandDirection:(NGVolumeControlExpandDirection)expandDirection;
-
-- (void)showSliderAnimated:(BOOL)animated;
-- (void)hideSliderAnimated:(BOOL)animated;
-- (void)toggleSliderAnimated:(BOOL)animated;
-
-- (void)systemVolumeChanged:(NSNotification *)notification;
-- (void)handleSliderValueChanged:(id)sender;
-
-- (void)updateUI;
-
-// NGVolumeControl+NGSubclass
-- (UIImage *)imageForVolume:(float)volume;
-- (void)customizeSlider:(UISlider *)slider;
-
 @end
 
 
 @implementation NGVolumeControl
-
-@synthesize expandDirection = _expandDirection;
-@synthesize expanded = _expanded;
-@synthesize sliderHeight = _sliderHeight;
-@synthesize volumeImageView = _volumeImageView;
-@synthesize sliderView = _sliderView;
-@synthesize slider = _slider;
-@synthesize touchStartPoint = _touchStartPoint;
-@synthesize touchesMoved = _touchesMoved;
-@synthesize minimumTrackColor = _minimumTrackColor;
-@synthesize maximumTrackColor = _maximumTrackColor;
-@synthesize sliderBackgroundView = _sliderBackgroundView;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -98,7 +69,6 @@ static MPVolumeView *ng_volumeView = nil;
         [_sliderView addSubview:_sliderBackgroundView];
         [self hideSliderAnimated:NO];
         [self addSubview:_sliderView];
-
 
         _slider = [[UISlider alloc] initWithFrame:CGRectMake(0.f, 0.f, _sliderHeight - 30.f, kNGSliderWidth)];
         _slider.minimumValue = 0.f;
@@ -488,6 +458,10 @@ static MPVolumeView *ng_volumeView = nil;
         return;
     }
 
+    if ([self.volumeDelegate respondsToSelector:@selector(volumeControlWillExpand:)]) {
+        [self.volumeDelegate volumeControlWillExpand:self];
+    }
+
     if (animated) {
         CGRect frame = self.sliderView.frame;
 
@@ -515,16 +489,25 @@ static MPVolumeView *ng_volumeView = nil;
                              self.sliderView.frame = frame;
                              self.sliderView.alpha = 1.f;
                          } completion:^(BOOL finished) {
-
+                             if ([self.volumeDelegate respondsToSelector:@selector(volumeControlDidExpand:)]) {
+                                 [self.volumeDelegate volumeControlDidExpand:self];
+                             }
                          }];
     } else {
         self.sliderView.alpha = 1.f;
+        if ([self.volumeDelegate respondsToSelector:@selector(volumeControlDidExpand:)]) {
+            [self.volumeDelegate volumeControlDidExpand:self];
+        }
     }
 }
 
 - (void)hideSliderAnimated:(BOOL)animated {
     if (!self.sliderVisible) {
         return;
+    }
+
+    if ([self.volumeDelegate respondsToSelector:@selector(volumeControlWillShrink:)]) {
+        [self.volumeDelegate volumeControlWillShrink:self];
     }
 
     if (animated) {
@@ -547,10 +530,15 @@ static MPVolumeView *ng_volumeView = nil;
                              self.sliderView.frame = frame;
                              self.sliderView.alpha = 0.f;
                          } completion:^(BOOL finished) {
-
+                             if ([self.volumeDelegate respondsToSelector:@selector(volumeControlDidShrink:)]) {
+                                 [self.volumeDelegate volumeControlDidShrink:self];
+                             }
                          }];
     } else {
         self.sliderView.alpha = 0.f;
+        if ([self.volumeDelegate respondsToSelector:@selector(volumeControlDidShrink:)]) {
+            [self.volumeDelegate volumeControlDidShrink:self];
+        }
     }
 }
 

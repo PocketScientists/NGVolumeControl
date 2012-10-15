@@ -19,6 +19,7 @@
 		9B0454C81504F33E007F8E7C /* NGGeometryFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGGeometryFunctions.h; sourceTree = "<group>"; };
 		9B0454F715058022007F8E7C /* NGVolumeControl+NGCustomize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NGVolumeControl+NGCustomize.h"; sourceTree = "<group>"; };
 		9B17FBF214FCDDDB00BF5F4A /* NGVolumeControlExpandDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NGVolumeControlExpandDirection.h; sourceTree = "<group>"; };
+		9BB6010C162C308F00EFD66B /* NGVolumeControlDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NGVolumeControlDelegate.h; sourceTree = "<group>"; };
 		9BCC745F14FCCE8D004F30FF /* libNGVolumeControl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNGVolumeControl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BCC746214FCCE8D004F30FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9BCC746614FCCE8D004F30FF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 			children = (
 				9BCC746714FCCE8D004F30FF /* NGVolumeControl.h */,
 				9BCC746814FCCE8D004F30FF /* NGVolumeControl.m */,
+				9BB6010C162C308F00EFD66B /* NGVolumeControlDelegate.h */,
 				9B17FBF214FCDDDB00BF5F4A /* NGVolumeControlExpandDirection.h */,
 				9B0454F715058022007F8E7C /* NGVolumeControl+NGCustomize.h */,
 				9B0454C81504F33E007F8E7C /* NGGeometryFunctions.h */,

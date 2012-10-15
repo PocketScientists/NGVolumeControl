@@ -7,11 +7,16 @@
 //
 
 #import "NGVolumeControlExpandDirection.h"
+#import "NGVolumeControlDelegate.h"
+
 
 /**
  A custom volume control that features a quick-select gesture to change the system volume
  */
 @interface NGVolumeControl : UIControl
+
+/* The delegate to be informed about volume control changes */
+@property (nonatomic, unsafe_unretained) id<NGVolumeControlDelegate> volumeDelegate;
 
 /** The system volume, between 0.0f and 1.0f */
 @property (nonatomic, assign) float volume;
