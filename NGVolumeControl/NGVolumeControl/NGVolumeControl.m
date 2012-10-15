@@ -1,6 +1,7 @@
 #import "NGVolumeControl.h"
 #import "NGGeometryFunctions.h"
 #import "NGVolumeControl+NGCustomize.h"
+#import "NGVolumeSlider.h"
 
 
 #define NGSystemVolumeDidChangeNotification         @"AVSystemController_SystemVolumeDidChangeNotification"
@@ -19,7 +20,7 @@ static MPVolumeView *ng_volumeView = nil;
 
 @property (nonatomic, strong) UIImageView *volumeImageView;
 @property (nonatomic, strong) UIView *sliderView;
-@property (nonatomic, strong) UISlider *slider;
+@property (nonatomic, strong) NGVolumeSlider *slider;
 @property (nonatomic, assign) float systemVolume;
 @property (nonatomic, readonly) BOOL sliderVisible;
 
@@ -63,14 +64,20 @@ static MPVolumeView *ng_volumeView = nil;
         _sliderView.clipsToBounds = YES;
         _sliderView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
-        _sliderBackgroundView = [[UIImageView alloc] initWithFrame:_sliderView.bounds];
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSliderViewPan:)];
+        panGesture.cancelsTouchesInView = YES;
+        panGesture.delaysTouchesBegan = YES;
+        panGesture.delaysTouchesEnded = YES;
+        [_sliderView addGestureRecognizer:panGesture];
+
+        _sliderBackgroundView = [[UIImageView alloc] initWithFrame:CGRectInset(_sliderView.bounds, 10.f, 0.f)];
         _sliderBackgroundView.image = [self imageForSliderBackgroundForExpandDirection:_expandDirection];
         _sliderBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [_sliderView addSubview:_sliderBackgroundView];
         [self hideSliderAnimated:NO];
         [self addSubview:_sliderView];
 
-        _slider = [[UISlider alloc] initWithFrame:CGRectMake(0.f, 0.f, _sliderHeight - 30.f, kNGSliderWidth)];
+        _slider = [[NGVolumeSlider alloc] initWithFrame:CGRectMake(0.f, 0.f, _sliderHeight - 30.f, kNGSliderWidth)];
         _slider.minimumValue = 0.f;
         _slider.maximumValue = 1.f;
         _slider.transform = [self transformForExpandDirection:_expandDirection];
@@ -179,7 +186,7 @@ static MPVolumeView *ng_volumeView = nil;
 ////////////////////////////////////////////////////////////////////////
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
-    self.touchStartPoint = [touch locationInView:self];
+    [self handleTouchesBeganAtPoint:[touch locationInView:self]];
 
     if (!self.expanded) {
         [self setExpanded:YES animated:YES];
@@ -195,26 +202,8 @@ static MPVolumeView *ng_volumeView = nil;
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     if (self.expanded) {
         CGPoint point = [touch locationInView:self.sliderView];
-        CGFloat distance = NGDistanceBetweenCGPoints(point, self.touchStartPoint);
 
-        // check if we moved the touches because we automatically collapse when the touches
-        // end when the user moved the touches
-        if (distance > kNGMinimumSlideDistance) {
-            self.touchesMoved = YES;
-        }
-
-        if (point.y > self.sliderHeight) {
-            point.y = self.sliderHeight;
-        }
-
-        CGFloat percentage = point.y/self.sliderHeight;
-
-        if (self.expandDirection == NGVolumeControlExpandDirectionUp) {
-            percentage = 1.f - percentage;
-        }
-
-        self.slider.value = percentage;
-        self.volume = percentage;
+        [self handleTouchesMovedToPoint:point];
     }
 
     return YES;
@@ -416,11 +405,15 @@ static MPVolumeView *ng_volumeView = nil;
 }
 
 - (CGRect)volumeViewFrameForExpandDirection:(NGVolumeControlExpandDirection)expandDirection {
+    CGRect frame = CGRectZero;
+
     if (expandDirection == NGVolumeControlExpandDirectionUp) {
-        return CGRectMake(0, -self.sliderHeight, self.bounds.size.width, self.sliderHeight);
+        frame = CGRectMake(0.f, -self.sliderHeight, self.bounds.size.width, self.sliderHeight);
     } else {
-        return CGRectMake(0, self.bounds.size.height, self.bounds.size.width, self.sliderHeight);
+        frame = CGRectMake(0.f, self.bounds.size.height, self.bounds.size.width, self.sliderHeight);
     }
+
+    return CGRectInset(frame,-10.f,0.f);
 }
 
 - (UIImage *)imageForSliderBackgroundForExpandDirection:(NGVolumeControlExpandDirection)expandDirection {
@@ -556,6 +549,45 @@ static MPVolumeView *ng_volumeView = nil;
 
 - (void)handleSliderValueChanged:(id)sender {
     self.volume = self.slider.value;
+}
+
+- (void)handleSliderViewPan:(UIPanGestureRecognizer *)panGesture {
+    if (panGesture.state == UIGestureRecognizerStateBegan) {
+        [self handleTouchesBeganAtPoint:[panGesture locationInView:self.sliderView]];
+    }
+
+    else if (panGesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint point = [panGesture locationInView:self.sliderView];
+
+        [self handleTouchesMovedToPoint:point];
+    }
+}
+
+- (void)handleTouchesBeganAtPoint:(CGPoint)point {
+    self.touchStartPoint = point;
+}
+
+- (void)handleTouchesMovedToPoint:(CGPoint)point {
+    CGFloat distance = NGDistanceBetweenCGPoints(point, self.touchStartPoint);
+
+    // check if we moved the touches because we automatically collapse when the touches
+    // end when the user moved the touches
+    if (distance > kNGMinimumSlideDistance) {
+        self.touchesMoved = YES;
+    }
+
+    if (point.y > self.sliderHeight) {
+        point.y = self.sliderHeight;
+    }
+
+    CGFloat percentage = point.y/self.sliderHeight;
+
+    if (self.expandDirection == NGVolumeControlExpandDirectionUp) {
+        percentage = 1.f - percentage;
+    }
+
+    self.slider.value = percentage;
+    self.volume = percentage;
 }
 
 @end
