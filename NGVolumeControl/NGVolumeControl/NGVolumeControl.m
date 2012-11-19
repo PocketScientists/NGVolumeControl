@@ -288,10 +288,10 @@ static MPVolumeView *ng_volumeView = nil;
     if (expandDirection != _expandDirection) {
         _expandDirection = expandDirection;
 
-        self.slider.transform = [self transformForExpandDirection:expandDirection];
         self.sliderView.frame = [self volumeViewFrameForExpandDirection:expandDirection];
-
         self.sliderBackgroundView.image = [self imageForSliderBackgroundForExpandDirection:expandDirection];
+        
+        [self setSliderHeight:self.sliderHeight];
     }
 }
 
@@ -317,7 +317,7 @@ static MPVolumeView *ng_volumeView = nil;
     }
 
     CGFloat offset = _expandDirection == NGVolumeControlExpandDirectionDown ? -5.f : 5.f;
-    CGFloat horizontalOffset = _expandDirection == NGVolumeControlExpandDirectionDown ? 0.5f : 0.f;
+    CGFloat horizontalOffset = _expandDirection == NGVolumeControlExpandDirectionDown ? 1.f : 0.f;
 
     // Update UI to new height
     [self hideSliderAnimated:NO];
