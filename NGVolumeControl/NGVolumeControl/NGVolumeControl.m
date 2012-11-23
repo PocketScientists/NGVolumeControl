@@ -11,7 +11,7 @@
 #define kNGShadowRadius                             10.f
 #define kNGSlideDuration                             0.2
 #define kNGMinimumTapSize                           44.f
-
+#define kNGSliderBackgroundWidth                    35.f
 
 static MPVolumeView *ng_volumeView = nil;
 
@@ -44,6 +44,7 @@ static MPVolumeView *ng_volumeView = nil;
         self.backgroundColor = [UIColor clearColor];
 
         _sliderHeight = kNGSliderHeight;
+        _sliderBackgroundWidth = kNGSliderBackgroundWidth;
         _expandDirection = NGVolumeControlExpandDirectionUp;
         _expanded = NO;
         _minimumTrackColor = [UIColor whiteColor];
@@ -60,7 +61,6 @@ static MPVolumeView *ng_volumeView = nil;
 
         _sliderView = [[UIView alloc] initWithFrame:[self volumeViewFrameForExpandDirection:_expandDirection]];
         _sliderView.backgroundColor = [UIColor clearColor];
-        _sliderView.contentMode = UIViewContentModeTop;
         _sliderView.clipsToBounds = YES;
         _sliderView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
@@ -70,9 +70,10 @@ static MPVolumeView *ng_volumeView = nil;
         panGesture.delaysTouchesEnded = YES;
         [_sliderView addGestureRecognizer:panGesture];
 
-        _sliderBackgroundView = [[UIImageView alloc] initWithFrame:CGRectInset(_sliderView.bounds, 10.f, 0.f)];
+        CGFloat offset = (_sliderView.bounds.size.width - _sliderBackgroundWidth) / 2.f;
+        _sliderBackgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(offset, 0.f, _sliderBackgroundWidth, _sliderView.bounds.size.height)];
         _sliderBackgroundView.image = [self imageForSliderBackgroundForExpandDirection:_expandDirection];
-        _sliderBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _sliderBackgroundView.layer.borderWidth = 1.f; _sliderBackgroundView.layer.borderColor = [UIColor orangeColor].CGColor;
         [_sliderView addSubview:_sliderBackgroundView];
         [self hideSliderAnimated:NO];
         [self addSubview:_sliderView];
@@ -291,6 +292,14 @@ static MPVolumeView *ng_volumeView = nil;
         self.sliderView.frame = [self volumeViewFrameForExpandDirection:expandDirection];
         self.sliderBackgroundView.image = [self imageForSliderBackgroundForExpandDirection:expandDirection];
         
+        if (expandDirection == NGVolumeControlExpandDirectionDown) {
+            self.sliderBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleBottomMargin;
+            self.sliderView.contentMode = UIViewContentModeTop;
+        } else {
+            self.sliderBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
+            self.sliderView.contentMode = UIViewContentModeBottom;
+        }
+        
         [self setSliderHeight:self.sliderHeight];
     }
 }
@@ -308,6 +317,15 @@ static MPVolumeView *ng_volumeView = nil;
         _maximumTrackColor = maximumTrackColor;
 
         [self customizeSlider:self.slider];
+    }
+}
+
+- (void)setSliderBackgroundWidth:(CGFloat)sliderBackgroundWidth {
+    if (sliderBackgroundWidth != _sliderBackgroundWidth) {
+        _sliderBackgroundWidth = sliderBackgroundWidth;
+        
+        CGFloat offset = (_sliderView.bounds.size.width - _sliderBackgroundWidth) / 2.f;
+        _sliderBackgroundView.frame = CGRectMake(offset, 0.f, _sliderBackgroundWidth, _sliderView.bounds.size.height);
     }
 }
 
