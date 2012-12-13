@@ -73,7 +73,6 @@ static MPVolumeView *ng_volumeView = nil;
         CGFloat offset = (_sliderView.bounds.size.width - _sliderBackgroundWidth) / 2.f;
         _sliderBackgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(offset, 0.f, _sliderBackgroundWidth, _sliderView.bounds.size.height)];
         _sliderBackgroundView.image = [self imageForSliderBackgroundForExpandDirection:_expandDirection];
-        _sliderBackgroundView.layer.borderWidth = 1.f; _sliderBackgroundView.layer.borderColor = [UIColor orangeColor].CGColor;
         [_sliderView addSubview:_sliderBackgroundView];
         [self hideSliderAnimated:NO];
         [self addSubview:_sliderView];
