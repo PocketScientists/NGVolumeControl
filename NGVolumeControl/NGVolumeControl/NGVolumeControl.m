@@ -334,7 +334,7 @@ static MPVolumeView *ng_volumeView = nil;
     }
 
     CGFloat offset = _expandDirection == NGVolumeControlExpandDirectionDown ? -5.f : 5.f;
-    CGFloat horizontalOffset = _expandDirection == NGVolumeControlExpandDirectionDown ? 1.f : 0.f;
+    CGFloat horizontalOffset = _expandDirection == NGVolumeControlExpandDirectionDown ? 0.f : 1.f;
 
     // Update UI to new height
     [self hideSliderAnimated:NO];
@@ -415,9 +415,9 @@ static MPVolumeView *ng_volumeView = nil;
 
 - (CGAffineTransform)transformForExpandDirection:(NGVolumeControlExpandDirection)expandDirection {
     if (expandDirection == NGVolumeControlExpandDirectionUp) {
-        return CGAffineTransformMakeRotation(-M_PI/2.f);
-    } else {
         return CGAffineTransformMakeRotation(M_PI/2.f);
+    } else {
+        return CGAffineTransformMakeRotation(-M_PI/2.f);
     }
 }
 
@@ -599,7 +599,7 @@ static MPVolumeView *ng_volumeView = nil;
 
     CGFloat percentage = point.y/self.sliderHeight;
 
-    if (self.expandDirection == NGVolumeControlExpandDirectionUp) {
+    if (self.expandDirection == NGVolumeControlExpandDirectionDown) {
         percentage = 1.f - percentage;
     }
 
