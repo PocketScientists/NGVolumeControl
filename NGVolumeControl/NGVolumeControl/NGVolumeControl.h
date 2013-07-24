@@ -27,15 +27,15 @@
 @property (nonatomic, assign) BOOL expanded;
 
 /** The height of the expanded volume slider */
-@property (nonatomic, assign) CGFloat sliderHeight;
+@property (nonatomic, assign) CGFloat sliderHeight UI_APPEARANCE_SELECTOR;
 
 /** The width of the expanded volume slider background view */
 @property (nonatomic, assign) CGFloat sliderBackgroundWidth;
 
 /** The color of the slider track below the current value, defaults to white */
-@property (nonatomic, strong) UIColor *minimumTrackColor;
+@property (nonatomic, strong) UIColor *minimumTrackColor UI_APPEARANCE_SELECTOR;
 /** The color of the slider track above the current value, defaults to gray */
-@property (nonatomic, strong) UIColor *maximumTrackColor;
+@property (nonatomic, strong) UIColor *maximumTrackColor UI_APPEARANCE_SELECTOR;
 
 /**
  Prevents the system audio change popup from showing up by adding a (hidden) MPVolumeView
