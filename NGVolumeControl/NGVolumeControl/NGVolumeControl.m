@@ -22,6 +22,7 @@ static MPVolumeView *ng_volumeView = nil;
 @property (nonatomic, strong) UIView *sliderView;
 @property (nonatomic, strong) NGVolumeSlider *slider;
 @property (nonatomic, assign) float systemVolume;
+@property (nonatomic, assign) float currentSystemVolume;
 @property (nonatomic, readonly) BOOL sliderVisible;
 
 @property (nonatomic, assign) CGPoint touchStartPoint;
@@ -101,6 +102,8 @@ static MPVolumeView *ng_volumeView = nil;
 
             CGPathRelease(path);
         }
+        
+        self.currentSystemVolume = self.systemVolume;
 
         // observe changes to system volume (volume buttons)
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -388,7 +391,13 @@ static MPVolumeView *ng_volumeView = nil;
 
 - (void)setSystemVolume:(float)systemVolume {
     MPMusicPlayerController *musicPlayer = [MPMusicPlayerController iPodMusicPlayer];
+    
+    if ([self.volumeDelegate respondsToSelector:@selector(volumeControl:didChangeOldVolume:toNewVolume:)]) {
+        [self.volumeDelegate volumeControl:self didChangeOldVolume:musicPlayer.volume toNewVolume:systemVolume];
+    }
+    
     musicPlayer.volume = systemVolume;
+    self.currentSystemVolume = systemVolume;
 }
 
 - (float)systemVolume {
@@ -544,6 +553,11 @@ static MPVolumeView *ng_volumeView = nil;
 
 - (void)systemVolumeChanged:(NSNotification *)notification {
     // we update the UI when the system volume changed (volume buttons)
+    if ([self.volumeDelegate respondsToSelector:@selector(volumeControl:didChangeOldVolume:toNewVolume:)]) {
+        float newVolume = [notification.userInfo[@"AVSystemController_AudioVolumeNotificationParameter"] floatValue];
+        [self.volumeDelegate volumeControl:self didChangeOldVolume:self.currentSystemVolume toNewVolume:newVolume];
+        self.currentSystemVolume = newVolume;
+    }
     [self updateUI];
 }
 
