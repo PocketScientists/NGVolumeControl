@@ -20,5 +20,6 @@
 - (void)volumeControlDidExpand:(NGVolumeControl *)volumeControl;
 - (void)volumeControlWillShrink:(NGVolumeControl *)volumeControl;
 - (void)volumeControlDidShrink:(NGVolumeControl *)volumeControl;
+- (void)volumeControl:(NGVolumeControl *)volumeControl didChangeOldVolume:(float)oldVolume toNewVolume:(float)newVolume;
 
 @end
